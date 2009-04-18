@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# FLAC Streaming Downsampler to ogg with id3 tags
+#
+# By HaaTa (Jacob Alexander)
+
+# Input Variables
+file=$1
+sample=$2
+
+# Help
+if [ $# -eq 0 ] || [ "$file" = "-h" ] || [ "$file" = "--help" ]; then
+	echo "FLAC Streaming Downsampler Script"
+	echo "Parses FLAC tags to be reapplied to the output ogg"
+	echo "-Output is stdout-"
+	echo "-Uses flac and lame-"
+	echo ""
+	echo "Usage:"
+	echo "  flacDownsampleStream [OPTION] <input file> <sample rate> [debug]"
+	echo ""
+	echo "Usual Options:"
+	echo "  -h, --help        Script usage information"
+	echo ""
+	echo "Notes:"
+	echo "  Adding debug at the end will not produce a stdout stream."
+	echo "  Its for checking if the parsing is working."
+	exit 0
+fi
+
+# MetaFLAC
+info=`metaflac --show-tag=Title --show-tag=Artist --show-tag=Album --show-tag=Genre --show-tag=Date --show-tag=Description --show-tag=TRACKNUMBER "$file"`
+
+# Seds
+title=`echo "$info" | sed -n 's/Title=\(.*\)/\1/p'`
+artist=`echo "$info" | sed -n 's/Artist=\(.*\)/\1/p'`
+album=`echo "$info" | sed -n 's/Album=\(.*\)/\1/p'`
+genre=`echo "$info" | sed -n 's/Genre=\(.*\)/\1/p'`
+date=`echo "$info" | sed -n 's/Date=\(.*\)/\1/p'`
+comment=`echo "$info" | sed -n 's/Description=\(.*\)/\1/p'`
+track=`echo "$info" | sed -n 's/TRACKNUMBER=\(.*\)/\1/p'`
+
+if [ $# -eq 3 ] && [ $3 = "debug" ]; then
+	# Debug
+	echo "File    - $file"
+	echo "Sample  - $sample"
+	echo "---------------Post-Parse----------------"
+	echo "Title   - $title" 
+	echo "Artist  - $artist"
+	echo "Album   - $album"
+	echo "Genre   - $genre"
+	echo "Date    - $date"
+	echo "Comment - $comment"
+	echo "Track   - $track"
+	echo "---------------Pre-Parse-----------------"
+	echo "$info"
+else
+	# Downsample Command
+	#flac -dc "$file" | lame -b "$sample" --tt "$title" --ta "$artist" --tl "$album" --ty "$date" --tc "$comment" --tn "$track" --tg "$genre" -S - -
+	flac -dc "$file" | lame -b "$sample" -S - bla
+fi
+
+exit 0
+

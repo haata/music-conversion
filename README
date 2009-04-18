@@ -1,0 +1,14 @@
+flacDownsampleStream is a script that will downsample a flac stream to an ogg stream (which is normal and easy)
+
+Its nice feature is that it re-encodes the flac tags back into the ogg right into the stream.
+I wrote this until I noticed that ampache was doing it properly and my mpd was just old...
+
+But its still useful as an example
+
+
+Copyright (C) Jacob Alexander
+
+Feel free to modify and do whatever you like with the script(s)
+
+April 17 2009
+
